@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -27,6 +28,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.layout.ContentScale
@@ -36,14 +38,14 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.zIndex
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import org.mathieu.cleanrmapi.domain.character.models.Character
 import org.mathieu.cleanrmapi.ui.core.composables.Avatar
+import org.mathieu.cleanrmapi.ui.core.composables.BackArrow
 import org.mathieu.cleanrmapi.ui.core.composables.IconWithImage
 import org.mathieu.cleanrmapi.ui.core.composables.Screen
-import org.mathieu.cleanrmapi.ui.core.extensions.imageVector
-import org.mathieu.cleanrmapi.ui.core.extensions.text
 import org.mathieu.cleanrmapi.ui.core.theme.PrimaryColor
 import org.mathieu.cleanrmapi.ui.core.theme.SurfaceColor
 
@@ -56,7 +58,8 @@ fun LocationDetailsScreen(navController: NavController, id: Int) {
         viewModel.init(locationId = id)
 
         Content(
-            state = state
+            state = state,
+            onClickBack = navController::popBackStack,
         )
     }
 }
@@ -64,20 +67,29 @@ fun LocationDetailsScreen(navController: NavController, id: Int) {
 @Composable
 private fun Content(
     state: LocationDetailsViewModel.LocationDetailsContract = LocationDetailsViewModel.LocationDetailsContract.Loading,
+    onClickBack: () -> Unit = { }
 ) {
-    when (state) {
-        is LocationDetailsViewModel.LocationDetailsContract.Loaded -> {
-            SuccessView(
-                state = state
-            )
-        }
+    Box(
+        modifier = Modifier.fillMaxSize().padding(), contentAlignment = Alignment.Center
+    ) {
 
-        is LocationDetailsViewModel.LocationDetailsContract.Error -> {
-            ErrorView(error = state.message)
-        }
+        BackArrow(
+            modifier = Modifier.align(Alignment.TopStart).zIndex(1f), onClick = onClickBack
+        )
+        when (state) {
+            is LocationDetailsViewModel.LocationDetailsContract.Loaded -> {
+                SuccessView(
+                    state = state
+                )
+            }
 
-        is LocationDetailsViewModel.LocationDetailsContract.Loading -> {
-            Text(text = "Loading...")
+            is LocationDetailsViewModel.LocationDetailsContract.Error -> {
+                ErrorView(error = state.message)
+            }
+
+            is LocationDetailsViewModel.LocationDetailsContract.Loading -> {
+                Text(text = "Loading...")
+            }
         }
     }
 }
