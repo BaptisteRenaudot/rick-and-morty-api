@@ -23,27 +23,6 @@ internal class LocationRepositoryImpl(
     private val locationDao: LocationDao
 ) : LocationRepository {
 
-    /**
-     * Retrieves the location with the specified ID.
-     *
-     * The function follows these steps:
-     * 1. Tries to fetch the location from the local storage.
-     * 2. If not found locally, it fetches the location from the API.
-     * 3. Upon successful API retrieval, it saves the location to local storage.
-     * 4. If the location is still not found, it throws an exception.
-     *
-     * @param id The unique identifier of the location to retrieve.
-     * @return The [Location] object representing the character details.
-     * @throws Exception If the location cannot be found both locally and via the API.
-     */
-    suspend fun getLocationDetailed(id: Int): LocationPreview {
-        val locationLocal = GetLocationObjectIfExists(id)
-
-        return locationLocal.toDetailedModel(
-            idsToLocationsConverter = ::getLocationsFromIdList
-        )
-    }
-
     private suspend fun getLocationsFromIdList(@MustBeCommaSeparatedIds idList: String): List<Location> {
         return if (idList.contains(",")) {
             val episodesResponse = locationApi.getLocationsFromIds(ids = idList)

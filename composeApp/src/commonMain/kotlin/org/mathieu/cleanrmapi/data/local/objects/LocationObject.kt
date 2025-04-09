@@ -6,6 +6,7 @@ import org.mathieu.cleanrmapi.data.extensions.extractIdsFromUrls
 import org.mathieu.cleanrmapi.data.local.RMDatabase
 import org.mathieu.cleanrmapi.data.remote.responses.LocationResponse
 import org.mathieu.cleanrmapi.data.validators.annotations.MustBeCommaSeparatedIds
+import org.mathieu.cleanrmapi.domain.character.models.Character
 import org.mathieu.cleanrmapi.domain.episode.models.Episode
 import org.mathieu.cleanrmapi.domain.location.Location
 import org.mathieu.cleanrmapi.domain.location.models.LocationPreview
@@ -29,12 +30,6 @@ class LocationObject(
     val residentsIds: String,
     val created: String
 )
-internal suspend fun LocationObject.toDetailedModel(
-    idsToLocationsConverter: suspend (locationIds: String) -> List<Location> = { emptyList() }
-) = LocationPreview(
-    id = id,
-    name = name,
-)
 
 internal fun LocationResponse.toDBObject() = LocationObject(
     id = id,
@@ -45,10 +40,12 @@ internal fun LocationResponse.toDBObject() = LocationObject(
     created = created
 )
 
-internal fun LocationObject.toModel() = Location(
+internal suspend fun LocationObject.toModel(
+    idsToCharacterConverter: suspend (charactersIds: String) -> List<Character> = { emptyList() }
+) = Location(
     id = id,
     name = name,
     type = type,
     dimension = dimension,
-    residents = emptyList()
+    residents = idsToCharacterConverter(residentsIds),
 )
