@@ -1,4 +1,4 @@
-# M'GPT
+# Rick and Morty
 
 This project is a Kotlin-based Android application designed with Clean Architecture principles. The app interacts with the Rick and Morty API to provide users with a detailed and interactive way to explore characters, episodes, and locations from the Rick and Morty universe.
 
