@@ -61,6 +61,8 @@ import org.mathieu.cleanrmapi.ui.core.extensions.imageVector
 import org.mathieu.cleanrmapi.ui.core.extensions.text
 import org.mathieu.cleanrmapi.ui.core.theme.PrimaryColor
 import org.mathieu.cleanrmapi.ui.core.theme.SurfaceColor
+import org.mathieu.cleanrmapi.ui.core.managers.SoundController
+
 
 @Composable
 fun CharacterDetailsScreen(
@@ -223,8 +225,6 @@ private object CharacterDetailsContent {
         location: LocationPreview,
         onAction: (CharacterDetailsAction) -> Unit
     ) {
-        val soundPlayer = getKoin().get<SoundPlayer>()
-
         Row(
             modifier = Modifier
                 .padding(8.dp)
@@ -244,7 +244,6 @@ private object CharacterDetailsContent {
 
             IconWithImage(
                 modifier = Modifier.weight(1f).clickable {
-                    soundPlayer.playClickSound()
                     onAction(CharacterDetailsAction.SelectedLocation(location))
                 },
                 imageVector = Icons.Rounded.Home,

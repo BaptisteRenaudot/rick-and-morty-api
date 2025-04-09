@@ -8,6 +8,8 @@ import org.mathieu.cleanrmapi.domain.episode.models.Episode
 import org.mathieu.cleanrmapi.domain.location.models.LocationPreview
 import org.mathieu.cleanrmapi.ui.core.Destination
 import org.mathieu.cleanrmapi.ui.core.ViewModel
+import org.mathieu.cleanrmapi.ui.core.managers.SoundController
+
 
 
 sealed interface CharacterDetailsAction {
@@ -22,6 +24,7 @@ class CharacterDetailsViewModel :
     ViewModel<CharacterDetailsState>(CharacterDetailsState.Loading) {
 
     private val characterRepository: CharacterRepository by inject()
+    private val soundController: SoundController by inject()
 
     fun init(characterId: Int) {
 
@@ -59,8 +62,10 @@ class CharacterDetailsViewModel :
         when(action) {
             is CharacterDetailsAction.SelectedEpisode ->
                 sendEvent(Destination.EpisodeDetails(action.episode.id.toString()))
-            is CharacterDetailsAction.SelectedLocation ->
+            is CharacterDetailsAction.SelectedLocation -> {
                 sendEvent(Destination.LocationDetails(action.location.id.toString()))
+                soundController.playClickSound()
+            }
         }
     }
 }
