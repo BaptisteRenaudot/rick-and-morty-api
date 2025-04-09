@@ -46,6 +46,8 @@ import androidx.compose.ui.zIndex
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import org.jetbrains.compose.ui.tooling.preview.Preview
+import org.koin.compose.getKoin
+import org.mathieu.cleanrmapi.SoundPlayer
 import org.mathieu.cleanrmapi.domain.character.models.CharacterGender
 import org.mathieu.cleanrmapi.domain.character.models.CharacterStatus
 import org.mathieu.cleanrmapi.domain.episode.models.Episode
@@ -220,34 +222,47 @@ private object CharacterDetailsContent {
         status: CharacterStatus,
         location: LocationPreview,
         onAction: (CharacterDetailsAction) -> Unit
-    ) = Row(
-        modifier = Modifier.padding(8.dp).fillMaxWidth().height(IntrinsicSize.Max),
-        horizontalArrangement = Arrangement.SpaceBetween
     ) {
+        val soundPlayer = getKoin().get<SoundPlayer>()
 
-        Spacer(Modifier.width(8.dp))
+        Row(
+            modifier = Modifier
+                .padding(8.dp)
+                .fillMaxWidth()
+                .height(IntrinsicSize.Max),
+            horizontalArrangement = Arrangement.SpaceBetween
+        ) {
+            Spacer(Modifier.width(8.dp))
 
-        IconWithImage(
-            modifier = Modifier.weight(1f), imageVector = gender.imageVector, text = gender.text
-        )
+            IconWithImage(
+                modifier = Modifier.weight(1f),
+                imageVector = gender.imageVector,
+                text = gender.text
+            )
 
-        Spacer(Modifier.width(16.dp))
+            Spacer(Modifier.width(16.dp))
 
-        IconWithImage(
-            modifier = Modifier.weight(1f).clickable {
-                onAction(CharacterDetailsAction.SelectedLocation(location))
-            }, imageVector = Icons.Rounded.Home, text = location.name
-        )
+            IconWithImage(
+                modifier = Modifier.weight(1f).clickable {
+                    soundPlayer.playClickSound()
+                    onAction(CharacterDetailsAction.SelectedLocation(location))
+                },
+                imageVector = Icons.Rounded.Home,
+                text = location.name
+            )
 
-        Spacer(Modifier.width(16.dp))
+            Spacer(Modifier.width(16.dp))
 
-        IconWithImage(
-            modifier = Modifier.weight(1f), imageVector = status.imageVector, text = status.text
-        )
+            IconWithImage(
+                modifier = Modifier.weight(1f),
+                imageVector = status.imageVector,
+                text = status.text
+            )
 
-        Spacer(Modifier.width(8.dp))
-
+            Spacer(Modifier.width(8.dp))
+        }
     }
+
 
     @Composable
     private fun EpisodeCard(
