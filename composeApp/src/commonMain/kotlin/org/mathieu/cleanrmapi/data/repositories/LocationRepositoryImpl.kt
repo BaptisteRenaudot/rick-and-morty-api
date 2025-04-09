@@ -9,6 +9,7 @@ import org.mathieu.cleanrmapi.data.local.objects.LocationObject
 import org.mathieu.cleanrmapi.data.local.objects.toDBObject
 import org.mathieu.cleanrmapi.data.local.objects.toDetailedModel
 import org.mathieu.cleanrmapi.data.local.objects.toModel
+import org.mathieu.cleanrmapi.data.remote.CharacterApi
 import org.mathieu.cleanrmapi.data.remote.LocationAPI
 import org.mathieu.cleanrmapi.data.validators.annotations.MustBeCommaSeparatedIds
 import org.mathieu.cleanrmapi.domain.character.models.Character
@@ -18,7 +19,7 @@ import org.mathieu.cleanrmapi.domain.location.LocationRepository
 import org.mathieu.cleanrmapi.domain.location.models.LocationPreview
 
 internal class LocationRepositoryImpl(
-
+    private val characterApi: CharacterApi
 ) : LocationRepository {
 
     /**
@@ -69,6 +70,20 @@ internal class LocationRepositoryImpl(
     override suspend fun getLocation(id: Int): Location {
         val locationLocal = GetLocationObjectIfExists(locationId = id)
 
-        return locationLocal.toModel()
+        val characters: List<Character> = locationLocal.residentsIds
+            .split(",")
+            .mapNotNull { it.toIntOrNull() }
+            .flatMap { id ->
+                characterApi.getCharacter(id)
+                    ?.toDBObject()
+                    ?.toModel()
+                    ?.toList() ?: emptyList()
+            }
+
+
+        return locationLocal.toModel(
+            idsToCharacterConverter = { characters }
+        )
+
     }
 }

@@ -62,12 +62,10 @@ import org.mathieu.cleanrmapi.ui.core.theme.SurfaceColor
 
 @Composable
 fun CharacterDetailsScreen(
-    navController: NavController,
-    id: Int
+    navController: NavController, id: Int
 ) {
     Screen(
-        viewModel = viewModel { CharacterDetailsViewModel() },
-        navController = navController
+        viewModel = viewModel { CharacterDetailsViewModel() }, navController = navController
     ) { state, viewModel ->
 
         LaunchedEffect(key1 = Unit) {
@@ -90,26 +88,20 @@ private fun Content(
     onAction: (CharacterDetailsAction) -> Unit = { },
     onClickBack: () -> Unit = { }
 ) = Box(
-    modifier = Modifier
-        .fillMaxSize()
-        .padding(),
-    contentAlignment = Alignment.Center
+    modifier = Modifier.fillMaxSize().padding(), contentAlignment = Alignment.Center
 ) {
 
     BackArrow(
-        modifier = Modifier
-            .align(Alignment.TopStart)
-            .zIndex(1f),
-        onClick = onClickBack
+        modifier = Modifier.align(Alignment.TopStart).zIndex(1f), onClick = onClickBack
     )
 
     Crossfade(targetState = state) {
         when (it) {
             is CharacterDetailsState.Error -> ErrorView(error = it.message)
             is CharacterDetailsState.Loaded -> CharacterDetailsContent(
-                state = it,
-                onAction = onAction
+                state = it, onAction = onAction
             )
+
             CharacterDetailsState.Loading -> {
                 /** TODO: Could display a Loading Animation */
             }
@@ -136,8 +128,7 @@ private object CharacterDetailsContent {
 
     @Composable
     operator fun invoke(
-        state: CharacterDetailsState.Loaded,
-        onAction: (CharacterDetailsAction) -> Unit
+        state: CharacterDetailsState.Loaded, onAction: (CharacterDetailsAction) -> Unit
     ) {
 
         var offsetY by remember {
@@ -145,30 +136,26 @@ private object CharacterDetailsContent {
         }
 
         Column(
-            modifier = Modifier
-                .fillMaxSize()
+            modifier = Modifier.fillMaxSize()
         ) {
 
             Header(
-                state = state,
-                offsetY = offsetY,
-                onAction = onAction
+                state = state, offsetY = offsetY, onAction = onAction
             )
 
             LazyColumn {
                 itemsIndexed(state.episodes) { index, episode ->
                     if (index == 0) {
-                        Box(modifier = Modifier.onGloballyPositioned { offsetY = it.positionInParent().y })
+                        Box(modifier = Modifier.onGloballyPositioned {
+                            offsetY = it.positionInParent().y
+                        })
                     }
-                    
-                    
+
+
                     EpisodeCard(
-                        modifier = Modifier
-                            .padding(8.dp)
-                            .clickable {
+                        modifier = Modifier.padding(8.dp).clickable {
                                 onAction(CharacterDetailsAction.SelectedEpisode(episode))
-                            },
-                        episode = episode
+                            }, episode = episode
                     )
 
                 }
@@ -201,18 +188,14 @@ private object CharacterDetailsContent {
             Avatar(url = state.avatarUrl)
 
             Column(
-                modifier = Modifier
-                    .background(SurfaceColor.copy(alpha = 0.3f))
-                    .fillMaxSize(),
+                modifier = Modifier.background(SurfaceColor.copy(alpha = 0.3f)).fillMaxSize(),
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.Bottom
             ) {
 
                 Text(
-                    modifier = Modifier
-                        .background(SurfaceColor, RoundedCornerShape(4.dp))
-                        .basicMarquee(iterations = Int.MAX_VALUE)
-                        .padding(8.dp),
+                    modifier = Modifier.background(SurfaceColor, RoundedCornerShape(4.dp))
+                        .basicMarquee(iterations = Int.MAX_VALUE).padding(8.dp),
                     text = state.name,
                     fontSize = 21.sp,
                     fontFamily = FontFamily.Serif,
@@ -238,18 +221,14 @@ private object CharacterDetailsContent {
         location: LocationPreview,
         onAction: (CharacterDetailsAction) -> Unit
     ) = Row(
-        modifier = Modifier
-            .padding(8.dp)
-            .fillMaxWidth()
-            .height(IntrinsicSize.Max),
+        modifier = Modifier.padding(8.dp).fillMaxWidth().height(IntrinsicSize.Max),
         horizontalArrangement = Arrangement.SpaceBetween
     ) {
 
         Spacer(Modifier.width(8.dp))
 
         IconWithImage(
-            modifier = Modifier.weight(1f),
-            imageVector = gender.imageVector, text = gender.text
+            modifier = Modifier.weight(1f), imageVector = gender.imageVector, text = gender.text
         )
 
         Spacer(Modifier.width(16.dp))
@@ -257,15 +236,13 @@ private object CharacterDetailsContent {
         IconWithImage(
             modifier = Modifier.weight(1f).clickable {
                 onAction(CharacterDetailsAction.SelectedLocation(location))
-            },
-            imageVector = Icons.Rounded.Home, text = location.name
+            }, imageVector = Icons.Rounded.Home, text = location.name
         )
 
         Spacer(Modifier.width(16.dp))
 
         IconWithImage(
-            modifier = Modifier.weight(1f),
-            imageVector = status.imageVector, text = status.text
+            modifier = Modifier.weight(1f), imageVector = status.imageVector, text = status.text
         )
 
         Spacer(Modifier.width(8.dp))
@@ -275,24 +252,21 @@ private object CharacterDetailsContent {
     @Composable
     private fun EpisodeCard(
         modifier: Modifier, episode: Episode
-    ) =
-        Column(
-            modifier = modifier
-                .shadow(1.dp, spotColor = PrimaryColor)
-                .background(SurfaceColor)
-                .fillMaxWidth()
-                .padding(horizontal = 16.dp, vertical = 12.dp)
-        ) {
+    ) = Column(
+        modifier = modifier.shadow(1.dp, spotColor = PrimaryColor).background(SurfaceColor)
+            .fillMaxWidth().padding(horizontal = 16.dp, vertical = 12.dp)
+    ) {
 
-            Text(text = episode.airDate, fontSize = 11.sp)
+        Text(text = episode.airDate, fontSize = 11.sp)
 
-            Text(
-                text = "${episode.episode} - ${episode.name}",
-                maxLines = 1,
-                overflow = TextOverflow.Ellipsis, fontSize = 13.sp
-            )
+        Text(
+            text = "${episode.episode} - ${episode.name}",
+            maxLines = 1,
+            overflow = TextOverflow.Ellipsis,
+            fontSize = 13.sp
+        )
 
-        }
+    }
 
 
 }
