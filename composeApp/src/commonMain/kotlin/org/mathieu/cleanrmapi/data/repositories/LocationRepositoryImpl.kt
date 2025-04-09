@@ -18,21 +18,8 @@ import org.mathieu.cleanrmapi.domain.location.LocationRepository
 import org.mathieu.cleanrmapi.domain.location.models.LocationPreview
 
 internal class LocationRepositoryImpl(
-    private val dataStore: DataStore,
-    private val locationApi: LocationAPI,
-    private val locationDao: LocationDao
+
 ) : LocationRepository {
-
-    private suspend fun getLocationsFromIdList(@MustBeCommaSeparatedIds idList: String): List<Location> {
-        return if (idList.contains(",")) {
-            val episodesResponse = locationApi.getLocationsFromIds(ids = idList)
-            episodesResponse.map { it.toDBObject().toModel() }
-        } else {
-            val episodeResponse = locationApi.getLocation(idList.toInt())
-            episodeResponse?.toDBObject()?.toModel()?.toList() ?: emptyList()
-        }
-
-    }
 
     /**
      * Orchestrates the retrieval of a LocationObject by attempting to fetch it locally first,
@@ -79,7 +66,7 @@ internal class LocationRepositoryImpl(
             ?: throw Exception("Location not found in local and remote storage.")
     }
 
-    override suspend fun getLocation(id: Int): Location? {
+    override suspend fun getLocation(id: Int): Location {
         val locationLocal = GetLocationObjectIfExists(locationId = id)
 
         return locationLocal.toModel()

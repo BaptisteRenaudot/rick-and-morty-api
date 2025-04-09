@@ -49,6 +49,7 @@ import org.jetbrains.compose.ui.tooling.preview.Preview
 import org.mathieu.cleanrmapi.domain.character.models.CharacterGender
 import org.mathieu.cleanrmapi.domain.character.models.CharacterStatus
 import org.mathieu.cleanrmapi.domain.episode.models.Episode
+import org.mathieu.cleanrmapi.domain.location.models.LocationPreview
 import org.mathieu.cleanrmapi.ui.core.composables.Avatar
 import org.mathieu.cleanrmapi.ui.core.composables.BackArrow
 import org.mathieu.cleanrmapi.ui.core.composables.IconWithImage
@@ -150,7 +151,8 @@ private object CharacterDetailsContent {
 
             Header(
                 state = state,
-                offsetY = offsetY
+                offsetY = offsetY,
+                onAction = onAction
             )
 
             LazyColumn {
@@ -183,7 +185,8 @@ private object CharacterDetailsContent {
     @Composable
     private fun Header(
         state: CharacterDetailsState.Loaded,
-        offsetY: Float
+        offsetY: Float,
+        onAction: (CharacterDetailsAction) -> Unit
     ) {
 
         val density = LocalDensity.current
@@ -219,7 +222,8 @@ private object CharacterDetailsContent {
                 AdditionalInfo(
                     gender = state.gender,
                     status = state.status,
-                    location = state.location
+                    location = state.location,
+                    onAction = onAction
                 )
 
             }
@@ -231,7 +235,8 @@ private object CharacterDetailsContent {
     private fun AdditionalInfo(
         gender: CharacterGender,
         status: CharacterStatus,
-        location: String
+        location: LocationPreview,
+        onAction: (CharacterDetailsAction) -> Unit
     ) = Row(
         modifier = Modifier
             .padding(8.dp)
@@ -250,8 +255,10 @@ private object CharacterDetailsContent {
         Spacer(Modifier.width(16.dp))
 
         IconWithImage(
-            modifier = Modifier.weight(1f),
-            imageVector = Icons.Rounded.Home, text = location
+            modifier = Modifier.weight(1f).clickable {
+                onAction(CharacterDetailsAction.SelectedLocation(location))
+            },
+            imageVector = Icons.Rounded.Home, text = location.name
         )
 
         Spacer(Modifier.width(16.dp))

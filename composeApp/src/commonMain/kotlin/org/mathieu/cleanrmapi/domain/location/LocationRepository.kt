@@ -7,5 +7,5 @@ interface LocationRepository {
      * @param id The unique identifier of the location to retrieve.
      * @return The [Location] representing the details of the location.
      */
-    suspend fun getLocation(id: Int): Location?
+    suspend fun getLocation(id: Int): Location
 }
